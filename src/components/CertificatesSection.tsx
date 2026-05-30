@@ -24,7 +24,7 @@ const emptyForm: Omit<Certificate, 'id'> = {
 };
 
 export default function CertificatesSection() {
-  const { certificates, patients, staff, addCertificate } = useMedStore();
+  const { certificates, patients, staff, addCertificate, deleteCertificate } = useMedStore();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
@@ -91,6 +91,7 @@ export default function CertificatesSection() {
                       <button className="p-1.5 rounded hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors" title="Просмотр">
                         <Icon name="Eye" size={14} fallback="Eye" />
                       </button>
+                      <button onClick={() => deleteCertificate(c.id)} className="p-1.5 rounded hover:bg-red-50 text-muted-foreground hover:text-red-600 transition-colors" title="Удалить"><Icon name="Trash2" size={14} fallback="Trash" /></button>
                     </div>
                   </td>
                 </tr>

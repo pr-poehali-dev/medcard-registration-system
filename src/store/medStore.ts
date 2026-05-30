@@ -26,11 +26,14 @@ interface MedStore {
 
   addExamination: (e: Omit<Examination, 'id'>) => void;
   updateExamination: (id: string, e: Partial<Examination>) => void;
+  deleteExamination: (id: string) => void;
 
   addSickLeave: (s: Omit<SickLeave, 'id'>) => void;
   updateSickLeave: (id: string, s: Partial<SickLeave>) => void;
+  deleteSickLeave: (id: string) => void;
 
   addCertificate: (c: Omit<Certificate, 'id'>) => void;
+  deleteCertificate: (id: string) => void;
 
   getPatientCard: (patientId: string) => MedicalCard | undefined;
   ensurePatientCard: (patientId: string) => string;
@@ -97,11 +100,14 @@ export const useMedStore = create<MedStore>()(
       },
 
       updateExamination: (id, e) => set(s => ({ examinations: s.examinations.map(x => x.id === id ? { ...x, ...e } : x) })),
+      deleteExamination: (id) => set(s => ({ examinations: s.examinations.filter(x => x.id !== id) })),
 
       addSickLeave: (sl) => set(s => ({ sickLeaves: [...s.sickLeaves, { ...sl, id: genId() }] })),
       updateSickLeave: (id, sl) => set(s => ({ sickLeaves: s.sickLeaves.map(x => x.id === id ? { ...x, ...sl } : x) })),
+      deleteSickLeave: (id) => set(s => ({ sickLeaves: s.sickLeaves.filter(x => x.id !== id) })),
 
       addCertificate: (c) => set(s => ({ certificates: [...s.certificates, { ...c, id: genId() }] })),
+      deleteCertificate: (id) => set(s => ({ certificates: s.certificates.filter(x => x.id !== id) })),
 
       getPatientCard: (patientId) => get().medicalCards.find(c => c.patientId === patientId),
 

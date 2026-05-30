@@ -12,7 +12,7 @@ const emptyExam: Omit<Examination, 'id'> = {
 };
 
 export default function ExaminationsSection() {
-  const { examinations, patients, staff, addExamination, updateExamination } = useMedStore();
+  const { examinations, patients, staff, addExamination, updateExamination, deleteExamination } = useMedStore();
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -93,6 +93,7 @@ export default function ExaminationsSection() {
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
                       <button onClick={() => openEdit(e)} className="p-1.5 rounded hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"><Icon name="Pencil" size={14} fallback="Edit" /></button>
+                      <button onClick={() => deleteExamination(e.id)} className="p-1.5 rounded hover:bg-red-50 text-muted-foreground hover:text-red-600 transition-colors" title="Удалить"><Icon name="Trash2" size={14} fallback="Trash" /></button>
                     </div>
                   </td>
                 </tr>
