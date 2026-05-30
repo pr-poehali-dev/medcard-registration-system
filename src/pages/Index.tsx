@@ -1,17 +1,41 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import { useMedStore } from '@/store/medStore';
+import LoginPage from '@/components/LoginPage';
+import Layout from '@/components/Layout';
+import Dashboard from '@/components/Dashboard';
+import PatientsSection from '@/components/PatientsSection';
+import StaffSection from '@/components/StaffSection';
+import ExaminationsSection from '@/components/ExaminationsSection';
+import MedCardsSection from '@/components/MedCardsSection';
+import SickLeavesSection from '@/components/SickLeavesSection';
+import CertificatesSection from '@/components/CertificatesSection';
+import PrintSection from '@/components/PrintSection';
+import UsersSection from '@/components/UsersSection';
 
-const Index = () => {
+export default function Index() {
+  const { currentUser } = useMedStore();
+  const [activeSection, setActiveSection] = useState('dashboard');
+
+  if (!currentUser) return <LoginPage />;
+
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'dashboard': return <Dashboard onNavigate={setActiveSection} />;
+      case 'patients': return <PatientsSection />;
+      case 'staff': return <StaffSection />;
+      case 'examinations': return <ExaminationsSection />;
+      case 'medcards': return <MedCardsSection />;
+      case 'sickleaves': return <SickLeavesSection />;
+      case 'certificates': return <CertificatesSection />;
+      case 'print': return <PrintSection />;
+      case 'users': return <UsersSection />;
+      default: return <Dashboard onNavigate={setActiveSection} />;
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4 color-black text-black">Добро пожаловать!</h1>
-        <p className="text-xl text-gray-600">тут будет отображаться ваш проект</p>
-      </div>
-      <span className="absolute bottom-8 left-1/2 -translate-x-1/2 inline-block bg-[#FF6637] text-white text-sm px-4 py-2 rounded-full whitespace-nowrap">
-        Подождите 5 минут, Юра создает первую версию проекта с нуля
-      </span>
-    </div>
+    <Layout activeSection={activeSection} onNavigate={setActiveSection}>
+      {renderSection()}
+    </Layout>
   );
-};
-
-export default Index;
+}
