@@ -6,11 +6,14 @@ export default function LoginPage() {
   const { login } = useMedStore();
   const [form, setForm] = useState({ login: '', password: '' });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    const ok = login(form.login, form.password);
+    setLoading(true);
+    const ok = await login(form.login, form.password);
+    setLoading(false);
     if (!ok) setError('Неверный логин или пароль');
   };
 
@@ -58,10 +61,12 @@ export default function LoginPage() {
             {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</p>}
             <button
               type="submit"
-              className="w-full py-2.5 px-4 rounded-md text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.98]"
+              disabled={loading}
+              className="w-full py-2.5 px-4 rounded-md text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2"
               style={{ background: 'hsl(213, 70%, 28%)' }}
             >
-              Войти в систему
+              {loading && <Icon name="Loader2" size={16} className="animate-spin" fallback="Loader" />}
+              {loading ? 'Загрузка данных...' : 'Войти в систему'}
             </button>
           </form>
         </div>

@@ -23,17 +23,23 @@ export default function UsersSection() {
   const [form, setForm] = useState({ login: '', password: '', name: '', role: 'doctor' as User['role'], confirmPassword: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); setSuccess('');
     if (form.password !== form.confirmPassword) { setError('Пароли не совпадают'); return; }
     if (form.password.length < 6) { setError('Пароль не менее 6 символов'); return; }
     if (users.find(u => u.login === form.login)) { setError('Логин уже занят'); return; }
-    registerUser({ login: form.login, password: form.password, name: form.name, role: form.role });
-    setSuccess(`Пользователь «${form.name}» создан`);
-    setForm({ login: '', password: '', name: '', role: 'doctor', confirmPassword: '' });
-    setShowForm(false);
+    setSubmitting(true);
+    try {
+      await registerUser({ login: form.login, password: form.password, name: form.name, role: form.role });
+      setSuccess(`Пользователь «${form.name}» создан`);
+      setForm({ login: '', password: '', name: '', role: 'doctor', confirmPassword: '' });
+      setShowForm(false);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputCls = "w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary";
@@ -139,7 +145,9 @@ export default function UsersSection() {
               {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</p>}
               <div className="flex justify-end gap-3 pt-2">
                 <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-md text-sm font-medium border border-border hover:bg-muted transition-colors">Отмена</button>
-                <button type="submit" className="px-4 py-2 rounded-md text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: 'hsl(213,70%,28%)' }}>Создать</button>
+                <button type="submit" disabled={submitting} className="px-4 py-2 rounded-md text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed" style={{ background: 'hsl(213,70%,28%)' }}>
+                  {submitting ? 'Сохранение...' : 'Создать'}
+                </button>
               </div>
             </form>
           </div>
