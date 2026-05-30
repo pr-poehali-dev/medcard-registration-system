@@ -18,7 +18,7 @@ const roleColors: Record<string, string> = {
 };
 
 export default function UsersSection() {
-  const { users, registerUser, currentUser } = useMedStore();
+  const { users, registerUser, deleteUser, currentUser } = useMedStore();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ login: '', password: '', name: '', role: 'doctor' as User['role'], confirmPassword: '' });
   const [error, setError] = useState('');
@@ -68,6 +68,7 @@ export default function UsersSection() {
               <th className="px-4 py-3 text-left">Роль</th>
               <th className="px-4 py-3 text-left">Дата регистрации</th>
               <th className="px-4 py-3 text-left">Статус</th>
+              <th className="px-4 py-3 text-right">Действия</th>
             </tr>
           </thead>
           <tbody>
@@ -85,6 +86,19 @@ export default function UsersSection() {
                 </td>
                 <td className="px-4 py-3 font-mono-med text-xs text-muted-foreground">{u.createdAt}</td>
                 <td className="px-4 py-3"><span className="med-badge-active">Активен</span></td>
+                <td className="px-4 py-3">
+                  <div className="flex justify-end">
+                    {u.id !== currentUser?.id && currentUser?.role === 'admin' && (
+                      <button
+                        onClick={() => deleteUser(u.id)}
+                        className="p-1.5 rounded hover:bg-red-50 text-muted-foreground hover:text-red-600 transition-colors"
+                        title="Удалить пользователя"
+                      >
+                        <Icon name="Trash2" size={14} fallback="Trash" />
+                      </button>
+                    )}
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>

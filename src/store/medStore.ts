@@ -15,6 +15,7 @@ interface MedStore {
   login: (login: string, password: string) => boolean;
   logout: () => void;
   registerUser: (user: Omit<User, 'id' | 'createdAt'>) => void;
+  deleteUser: (id: string) => void;
 
   addPatient: (p: Omit<Patient, 'id' | 'registeredAt'>) => void;
   updatePatient: (id: string, p: Partial<Patient>) => void;
@@ -74,6 +75,8 @@ export const useMedStore = create<MedStore>()(
         const user: User = { ...userData, id: genId(), createdAt: new Date().toISOString().split('T')[0] };
         set(s => ({ users: [...s.users, user] }));
       },
+
+      deleteUser: (id) => set(s => ({ users: s.users.filter(u => u.id !== id) })),
 
       addPatient: (p) => {
         const patient: Patient = { ...p, id: genId(), registeredAt: new Date().toISOString().split('T')[0] };
