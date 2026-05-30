@@ -18,28 +18,22 @@ const roleColors: Record<string, string> = {
 };
 
 export default function UsersSection() {
-  const { users, registerUser, deleteUser, currentUser } = useMedStore();
+  const { users, registerUser, currentUser } = useMedStore();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ login: '', password: '', name: '', role: 'doctor' as User['role'], confirmPassword: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); setSuccess('');
     if (form.password !== form.confirmPassword) { setError('Пароли не совпадают'); return; }
     if (form.password.length < 6) { setError('Пароль не менее 6 символов'); return; }
     if (users.find(u => u.login === form.login)) { setError('Логин уже занят'); return; }
-    setSubmitting(true);
-    try {
-      await registerUser({ login: form.login, password: form.password, name: form.name, role: form.role });
-      setSuccess(`Пользователь «${form.name}» создан`);
-      setForm({ login: '', password: '', name: '', role: 'doctor', confirmPassword: '' });
-      setShowForm(false);
-    } finally {
-      setSubmitting(false);
-    }
+    registerUser({ login: form.login, password: form.password, name: form.name, role: form.role });
+    setSuccess(`Пользователь «${form.name}» создан`);
+    setForm({ login: '', password: '', name: '', role: 'doctor', confirmPassword: '' });
+    setShowForm(false);
   };
 
   const inputCls = "w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary";
@@ -74,7 +68,6 @@ export default function UsersSection() {
               <th className="px-4 py-3 text-left">Роль</th>
               <th className="px-4 py-3 text-left">Дата регистрации</th>
               <th className="px-4 py-3 text-left">Статус</th>
-              <th className="px-4 py-3 text-right">Действия</th>
             </tr>
           </thead>
           <tbody>
@@ -92,19 +85,6 @@ export default function UsersSection() {
                 </td>
                 <td className="px-4 py-3 font-mono-med text-xs text-muted-foreground">{u.createdAt}</td>
                 <td className="px-4 py-3"><span className="med-badge-active">Активен</span></td>
-                <td className="px-4 py-3">
-                  <div className="flex justify-end">
-                    {u.id !== currentUser?.id && currentUser?.role === 'admin' && (
-                      <button
-                        onClick={() => deleteUser(u.id)}
-                        className="p-1.5 rounded hover:bg-red-50 text-muted-foreground hover:text-red-600 transition-colors"
-                        title="Удалить пользователя"
-                      >
-                        <Icon name="Trash2" size={14} fallback="Trash" />
-                      </button>
-                    )}
-                  </div>
-                </td>
               </tr>
             ))}
           </tbody>
@@ -145,9 +125,7 @@ export default function UsersSection() {
               {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</p>}
               <div className="flex justify-end gap-3 pt-2">
                 <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-md text-sm font-medium border border-border hover:bg-muted transition-colors">Отмена</button>
-                <button type="submit" disabled={submitting} className="px-4 py-2 rounded-md text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed" style={{ background: 'hsl(213,70%,28%)' }}>
-                  {submitting ? 'Сохранение...' : 'Создать'}
-                </button>
+                <button type="submit" className="px-4 py-2 rounded-md text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: 'hsl(213,70%,28%)' }}>Создать</button>
               </div>
             </form>
           </div>

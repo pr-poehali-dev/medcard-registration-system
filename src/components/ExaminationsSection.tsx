@@ -17,7 +17,6 @@ export default function ExaminationsSection() {
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyExam);
-  const [submitting, setSubmitting] = useState(false);
 
   const doctors = staff.filter(s => s.status === 'active');
 
@@ -31,16 +30,11 @@ export default function ExaminationsSection() {
   const openAdd = () => { setForm(emptyExam); setEditId(null); setShowForm(true); };
   const openEdit = (e: Examination) => { const { id, ...rest } = e; setForm(rest); setEditId(e.id); setShowForm(true); };
 
-  const handleSubmit = async (ev: React.FormEvent) => {
+  const handleSubmit = (ev: React.FormEvent) => {
     ev.preventDefault();
-    setSubmitting(true);
-    try {
-      if (editId) await updateExamination(editId, form);
-      else await addExamination(form);
-      setShowForm(false);
-    } finally {
-      setSubmitting(false);
-    }
+    if (editId) updateExamination(editId, form);
+    else addExamination(form);
+    setShowForm(false);
   };
 
   const inputCls = "w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary";
@@ -164,8 +158,8 @@ export default function ExaminationsSection() {
               </div>
               <div className="flex justify-end gap-3 pt-2">
                 <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-md text-sm font-medium border border-border hover:bg-muted transition-colors">Отмена</button>
-                <button type="submit" disabled={submitting} className="px-4 py-2 rounded-md text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed" style={{ background: 'hsl(213,70%,28%)' }}>
-                  {submitting ? 'Сохранение...' : (editId ? 'Сохранить' : 'Создать осмотр')}
+                <button type="submit" className="px-4 py-2 rounded-md text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: 'hsl(213,70%,28%)' }}>
+                  {editId ? 'Сохранить' : 'Создать осмотр'}
                 </button>
               </div>
             </form>

@@ -20,7 +20,6 @@ export default function SickLeavesSection() {
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
-  const [submitting, setSubmitting] = useState(false);
 
   const doctors = staff.filter(s => s.status === 'active');
 
@@ -32,16 +31,11 @@ export default function SickLeavesSection() {
   const openAdd = () => { setForm({ ...emptyForm, number: genNum() }); setEditId(null); setShowForm(true); };
   const openEdit = (s: SickLeave) => { const { id, ...rest } = s; setForm(rest); setEditId(s.id); setShowForm(true); };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-    try {
-      if (editId) await updateSickLeave(editId, form);
-      else await addSickLeave(form);
-      setShowForm(false);
-    } finally {
-      setSubmitting(false);
-    }
+    if (editId) updateSickLeave(editId, form);
+    else addSickLeave(form);
+    setShowForm(false);
   };
 
   const statusColors = { open: 'med-badge-warning', closed: 'med-badge-inactive', extended: 'med-badge-active' };
@@ -166,8 +160,8 @@ export default function SickLeavesSection() {
               </div>
               <div className="flex justify-end gap-3 pt-2">
                 <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-md text-sm font-medium border border-border hover:bg-muted transition-colors">Отмена</button>
-                <button type="submit" disabled={submitting} className="px-4 py-2 rounded-md text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed" style={{ background: 'hsl(36,90%,50%)' }}>
-                  {submitting ? 'Сохранение...' : (editId ? 'Сохранить' : 'Выдать больничный')}
+                <button type="submit" className="px-4 py-2 rounded-md text-sm font-semibold text-white transition-all hover:opacity-90" style={{ background: 'hsl(36,90%,50%)' }}>
+                  {editId ? 'Сохранить' : 'Выдать больничный'}
                 </button>
               </div>
             </form>
